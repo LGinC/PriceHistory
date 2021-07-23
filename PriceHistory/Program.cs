@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using PriceHistory.NoticeProviders;
 using PriceHistory.PriceProviders;
 using System.Threading.Tasks;
@@ -9,30 +10,23 @@ namespace PriceHistory
     {
         public const string ConfigFile = "appsettings.json";
 
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.Configure<PriceOptions>(hostContext.Configuration.GetSection("App"));
+                services.Configure<NoticeOptions>(hostContext.Configuration.GetSection("Notice"));
+                services.AddTransient<IPriceProvider, ManmanbuyPriceProvider>();
+                services.AddTransient<INoticeSender, QyWxBotNoticeSender>();
+                services.AddTransient<INoticeProvider, NoticeProvider>();
+                services.AddWxHttpClient();
+
+                services.AddHostedService<Worker>();
+            });
+
         static async Task Main(string[] args)
         {
-            var services = new ServiceCollection();
-            var env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile(ConfigFile, false, true)
-                .AddEnvironmentVariables();
-            if (!string.IsNullOrEmpty(env))
-            {
-                builder.AddJsonFile($"appsettings.{env}.json");
-            }
-            var config = builder.Build();
-            services.AddSingleton(config);
-            services.Configure<PriceOptions>(config.GetSection("App"));
-            services.Configure<NoticeOptions>(config.GetSection("Notice"));
-            services.AddTransient<IPriceProvider, ManmanbuyPriceProvider>();
-            services.AddTransient<INoticeSender, QyWxBotNoticeSender>();
-            services.AddScoped<INoticeProvider, NoticeProvider>();
-            services.AddWxHttpClient();
-            var provider = services.BuildServiceProvider();
-
-            await using var priceProvider = provider.GetService<IPriceProvider>();
-            await priceProvider.InitAsync();
-            await priceProvider.GetPricesAndNotifyAsync();
+            await CreateHostBuilder(args).Build().RunAsync();
         }
     }
 }

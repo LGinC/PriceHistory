@@ -52,6 +52,7 @@ namespace PriceHistory.PriceProviders
                 tasks.Add(Task.Run(async () =>
                 {
                     var page = await browser.NewPageAsync();
+                    Console.WriteLine($"{LowestPriceUrl}{HttpUtility.UrlEncode(url)}");
                     await page.GotoAsync($"{LowestPriceUrl}{HttpUtility.UrlEncode(url)}");
                     //设置window.navigator.webdriver为undefine  表示浏览器不是被自动控制
                     await page.EvaluateAsync("Object.defineProperties(navigator, {webdriver:{get:()=>undefined}});");
@@ -63,6 +64,7 @@ namespace PriceHistory.PriceProviders
                     decimal.TryParse(await page.TextContentAsync("span.bigwordprice"), out var lowestPrice);
                     var date = await page.TextContentAsync("//*[@id=\"maindiv\"]/div[2]/div[1]/div[2]/div[1]/div/span[2]");
                     var name = await page.TextContentAsync("//*[@id=\"maindiv\"]/div[2]/div[1]/div[2]/div[1]/h1");
+                    Console.WriteLine($"{name} \n  {currentPrice}/{lowestPrice}");
                     if (currentPrice <= lowestPrice * limit)//小于史低价格指定倍数  即可入手
                     {
                         await _noticeProvider.GetSender().NotifyAsync(name, currentPrice, lowestPrice, date, url);
