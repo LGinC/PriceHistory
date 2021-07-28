@@ -11,5 +11,10 @@
         /// 配置key
         /// </summary>
         public string Key { get; set; }
+
+        /// <summary>
+        /// 接收目标
+        /// </summary>
+        public string Target { get; set; }
     }
 }

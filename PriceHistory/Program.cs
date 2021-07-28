@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PriceHistory.NoticeProviders;
 using PriceHistory.PriceProviders;
@@ -18,8 +17,15 @@ namespace PriceHistory
                 services.Configure<NoticeOptions>(hostContext.Configuration.GetSection("Notice"));
                 services.AddTransient<IPriceProvider, ManmanbuyPriceProvider>();
                 services.AddTransient<INoticeSender, QyWxBotNoticeSender>();
+                services.AddTransient<INoticeSender, CqHttpNoticeSender>();
                 services.AddTransient<INoticeProvider, NoticeProvider>();
+                
                 services.AddWxHttpClient();
+
+                if (!string.IsNullOrWhiteSpace(hostContext.Configuration["Notice:BaseUrl"]))
+                {
+                    services.AddCqHttpClient(hostContext.Configuration["Notice:BaseUrl"]);
+                }
 
                 services.AddHostedService<Worker>();
             });

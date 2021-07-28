@@ -11,7 +11,7 @@
 ---
 支持的通知
 - [x] 企业微信群聊机器人 QyBot
-- [ ] QQ群聊机器人 QQBot
+- [x] QQ群聊机器人 QQBot
 - [ ] 钉钉群聊机器人 DDBot
 - [ ] 邮件 Email
 - [ ] 短信 SMS

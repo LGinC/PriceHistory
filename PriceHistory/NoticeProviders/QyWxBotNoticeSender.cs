@@ -34,15 +34,4 @@ namespace PriceHistory.NoticeProviders
         }
     }
 
-    public static class WxHttpClientExtension
-    {
-        public static IServiceCollection AddWxHttpClient(this IServiceCollection services)
-        {
-            services.AddHttpClient(NoticeType.QyBot.ToString(), client =>
-            {
-                client.BaseAddress = new Uri($"https://qyapi.weixin.qq.com");
-            });
-            return services;
-        }
-    }
 }

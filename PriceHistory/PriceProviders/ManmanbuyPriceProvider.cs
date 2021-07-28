@@ -25,8 +25,8 @@ namespace PriceHistory.PriceProviders
         public async ValueTask DisposeAsync()
         {
             Console.WriteLine("over");
-            await browser.DisposeAsync();
-            playwright.Dispose();
+            if(browser != null) await browser.DisposeAsync();
+            playwright?.Dispose();
         }
 
         public async Task InitAsync()
