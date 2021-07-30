@@ -42,8 +42,7 @@ appsettings.json内容如下
 
 ## 运行方式
 ### dotnet PriceHistory.dll
-修改appsetings.json里的值,然后使用dotnet 命令来运行 
-注意 不支持dotnet publish打包后运行,只支持dotnet build后运行
+修改appsetings.json里的值,然后使用dotnet 命令来运行
 
 ### docker
 拉取镜像 `docker pull lginc/price-history-notify`
